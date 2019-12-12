@@ -1,0 +1,121 @@
+ltm virtual nerdlife_vip {
+    destination 10.0.0.100:http
+    ip-protocol tcp
+    mask 255.255.255.255
+    pool nerdlife_pool
+    profiles {
+        http { }
+        tcp { }
+    }
+    source 0.0.0.0/0
+    source-address-translation {
+        type automap
+    }
+    translate-address enabled
+    translate-port enabled
+    vlans-enabled
+    vs-index 6
+}
+ltm virtual nerdknobs_vip {
+    destination 10.0.0.101:http
+    ip-protocol tcp
+    mask 255.255.255.255
+    pool nerdlife_pool
+    profiles {
+        http { }
+        tcp { }
+    }
+    source 0.0.0.0/0
+    source-address-translation {
+        type automap
+    }
+    translate-address enabled
+    translate-port enabled
+    vlans-enabled
+    vs-index 7
+}
+ltm virtual sni_vip {
+    destination 192.168.102.150:https
+    ip-protocol tcp
+    mask 255.255.255.255
+    policies {
+        sni_policy { }
+    }
+    profiles {
+        http { }
+        sni_fallback_cssl {
+            context clientside
+        }
+        sni_nerdknobs_cssl {
+            context clientside
+        }
+        sni_nerdlife_cssl {
+            context clientside
+        }
+        tcp { }
+    }
+    source 0.0.0.0/0
+    source-address-translation {
+        type automap
+    }
+    translate-address enabled
+    translate-port enabled
+    vlans {
+        v.102
+    }
+    vlans-enabled
+    vs-index 5
+}
+ltm policy sni_policy {
+    controls { forwarding }
+    last-modified 2019-12-11:18:26:26
+    requires { http client-ssl }
+    rules {
+        deny_all {
+            actions {
+                0 {
+                    shutdown
+                    connection
+                }
+            }
+            ordinal 2
+        }
+        nerdknobs_pol {
+            actions {
+                0 {
+                    forward
+                    select
+                    virtual /Common/nerdknobs_vip
+                }
+            }
+            conditions {
+                0 {
+                    ssl-extension
+                    ssl-client-hello
+                    server-name
+                    values { www.nerdknobs.local }
+                }
+            }
+            ordinal 1
+        }
+        nerdlife_pol {
+            actions {
+                0 {
+                    forward
+                    select
+                    virtual /Common/nerdlife_vip
+                }
+            }
+            conditions {
+                0 {
+                    ssl-extension
+                    ssl-client-hello
+                    server-name
+                    values { www.nerdlife.local }
+                }
+            }
+        }
+    }
+    status published
+    strategy first-match
+}

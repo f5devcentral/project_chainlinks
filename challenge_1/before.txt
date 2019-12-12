@@ -1,0 +1,59 @@
+sys file ssl-cert /Common/www.nerdlife.local.crt {
+    cache-path /config/filestore/files_d/Common_d/certificate_d/:Common:www.nerdlife.local.crt_60508_1
+    revision 1
+    source-path /var/run/key_mgmt/tPQ8xt/ssl.crt/www.nerdlife.local.crt
+}
+sys file ssl-key /Common/www.nerdlife.local.key {
+    cache-path /config/filestore/files_d/Common_d/certificate_key_d/:Common:www.nerdlife.local.key_60505_1
+    revision 1
+    source-path /var/run/key_mgmt/d63uYX/ssl.key/www.nerdlife.local.key
+}
+ltm profile client-ssl /Common/nerdlife_cssl {
+    app-service none
+    cert /Common/www.nerdlife.local.crt
+    cert-key-chain {
+        www.nerdlife.local {
+            cert /Common/www.nerdlife.local.crt
+            key /Common/www.nerdlife.local.key
+        }
+    }
+    chain none
+    defaults-from /Common/clientssl
+    inherit-certkeychain false
+    key /Common/www.nerdlife.local.key
+    passphrase none
+}
+ltm pool /Common/nerdlife_pool {
+    members {
+        /Common/192.168.103.20:80 {
+            address 192.168.103.20
+        }
+        /Common/192.168.103.30:80 {
+            address 192.168.103.30
+        }
+    }
+    monitor /Common/http
+}
+ltm virtual /Common/nerdlife_vip {
+    destination /Common/192.168.102.150:443
+    ip-protocol tcp
+    mask 255.255.255.255
+    pool /Common/nerdlife_pool
+    profiles {
+        /Common/http { }
+        /Common/nerdlife_cssl {
+            context clientside
+        }
+        /Common/tcp { }
+    }
+    source 0.0.0.0/0
+    source-address-translation {
+        type automap
+    }
+    translate-address enabled
+    translate-port enabled
+    vlans {
+        /Common/v.102
+    }
+    vlans-enabled
+}
