@@ -3,9 +3,11 @@ Project Chain Links
 
 Hey there, community! Many moons ago my good friend and colleague "THE" Colin Walker 
 started a series of iRules challenges for our sales engineers at their new hire boot 
-camps and then published the results here at DevCentral. Personally, I have used 
-Project Euler for my own development or for mentoring students I've worked with. 
-In shoring up my own python language-specific skills, I use PyBites and Python Morsels. 
+camps and then published the results on [DevCentral](https://devcentral.f5.com). Personally,
+I have used [Project Euler](https://projecteuler.net/) for my own development or for 
+mentoring students I've worked with. 
+In shoring up my own python language-specific skills, I use [PyBites](https://codechalleng.es/) 
+and [Python Morsels](https://www.pythonmorsels.com/). 
 All these are great for the busy technologist because they offer three things:
 
 1. A clear problem to solve
@@ -23,4 +25,4 @@ an amalgamation of Project Euler, the BIG-IP hud chain, and the F5 automation to
 The goal here is to build the requisite skills bite by bite to connect all these 
 chainlinks into a suite of skills at your disposal.
 
-- [Challenge One](challenge_1/solution_overview.md) - Supporting Multiple Applications with Limited IP Availabilty
+- [Challenge One](challenge_1/readme.md) - Supporting Multiple Applications with Limited IP Availabilty
